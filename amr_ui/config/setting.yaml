@@ -1,0 +1,21 @@
+#                                             ┌────────────────────────┐
+# ┌───────────────────────────────────────────┤     MAP CONVERTER      ├──────────────────────────────────────────┐
+# │                                   English └────────────┬───────────┘ Koreanㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ                  │
+# │ [UI]                                                   │ [UI]ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ                                │
+# │ voxel_size: 3d map voxel size                          │ voxel_size: Visualize상에서 3d map의 voxel sizeㅤㅤㅤㅤㅤ│  
+# │ point_size: 3d map point size                          │ point_size: Visualize상에서 3d map의 point sizeㅤㅤㅤㅤㅤ│ㅤ
+# │ z_plane_size: size of Z plane for setting(green plane) │ z_plane_size: 세팅에서 Z 평면 Visualization 사이즈(녹색)  │
+# │                                                        │ ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ                                    │
+# │ [Handler]                                              │ [Handler]ㅤㅤㅤㅤㅤ                                    │
+# │ octree_resolution: octree's resolution                 │ octree_resolution: octree 해상도                      │
+# │ z_margin_threshold: gridmap projection z margin        │ z_margin_threshold: 설정한 z값으로 자를때 위아래 허용 z값   │
+# └────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────┘
+map_converter:
+  ui:
+    voxel_size: 0.2 #[m]
+    point_size: 0.1
+    z_plane_size: 100.0
+  handler:
+    octree_resolution: 0.05 # resolution
+    z_margin_threshold: 0.2 #
+    ros_publish: true

@@ -1,0 +1,8 @@
+<launch>
+    <rosparam command="load" file="$(find amr_ui)/config/setting.yaml" />
+    <arg name="path_to_package" default="$(find amr_ui)/"/>
+    <param name="package_path" value="$(arg path_to_package)"/>
+
+    <node pkg="amr_ui" type="main_ui.py" name="main_ui" output="screen"/>
+    <node pkg="amr_ui" type="amr_ui_handler_node" name="amr_ui_handler_node" output="screen" args="$(arg path_to_package)"/>
+</launch>
