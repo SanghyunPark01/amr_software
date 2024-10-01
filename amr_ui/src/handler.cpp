@@ -21,7 +21,6 @@ bool AMR_UI_Handler::setMapConversion(amr_ui::map_conversion_settingRequest& req
     {
         _mbStartMapConversion = false;
         if(_mptrMapConverter != nullptr)_mptrMapConverter->stop();
-        std::cout << "stop!!!\n";
         res.status = true;
         return true;
     }

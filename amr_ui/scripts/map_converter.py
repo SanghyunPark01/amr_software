@@ -33,7 +33,6 @@ class MapConverter(QMainWindow,q_UI_form):
         self.VOXEL_SIZE = rospy.get_param("/map_converter/ui/voxel_size")
         self.POINT_SIZE = rospy.get_param("/map_converter/ui/point_size")
         self.Z_PLANE_SIZE = rospy.get_param("/map_converter/ui/z_plane_size")
-
         # ros
         self._m_client_conversion_flag = rospy.ServiceProxy('/ui/map_converter/bc43cc2993d551056f4ef3801d525ce0', map_conversion_setting)
 
@@ -165,6 +164,7 @@ class MapConverter(QMainWindow,q_UI_form):
 
         # init z_plane
         self._m_map_viewer.init_z_plane(center)
+        self.doubleSpinBox_z_value.setValue(z_min)
 
         # is OK
         self._m_setting_status = True
@@ -247,11 +247,12 @@ class Viewer(QWidget):
         # use rainbow color map
         cmap = plt.get_cmap('rainbow')
         colors = cmap(norm_z)
-        colors[:, 3] = 0.3 # alpha
+        colors[:, 3] = 0.7 # alpha
 
         # view pointcloud
         scatter = gl.GLScatterPlotItem(pos=self._m_map_data, size=self.POINT_SIZE, color=colors, pxMode=False)
         scatter.setGLOptions('translucent')
+        # scatter.setGLOptions('opaque')
         self._m_glwidget.addItem(scatter)
 
         return z_max, z_min

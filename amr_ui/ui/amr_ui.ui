@@ -7,8 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>1410</width>
-    <height>752</height>
+    <height>747</height>
    </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
   </property>
   <property name="windowTitle">
    <string>AMR Software</string>
@@ -22,6 +25,9 @@
       <width>561</width>
       <height>341</height>
      </rect>
+    </property>
+    <property name="acceptDrops">
+     <bool>true</bool>
     </property>
     <property name="title">
      <string>Map Data</string>
@@ -158,7 +164,7 @@
       <x>1290</x>
       <y>0</y>
       <width>21</width>
-      <height>761</height>
+      <height>701</height>
      </rect>
     </property>
     <property name="orientation">
@@ -247,7 +253,7 @@
       <string>Setting</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_vis_2dmap_3">
+    <widget class="QLabel" name="label_vis_waypoint">
      <property name="geometry">
       <rect>
        <x>190</x>
@@ -276,7 +282,7 @@
       <enum>Qt::Vertical</enum>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_gridmap_convert_6">
+    <widget class="QPushButton" name="pushButton_waypoint_start">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -317,6 +323,9 @@
       <height>691</height>
      </rect>
     </property>
+    <property name="acceptDrops">
+     <bool>true</bool>
+    </property>
     <property name="title">
      <string>Navigation</string>
     </property>
@@ -334,11 +343,14 @@
        <pointsize>25</pointsize>
       </font>
      </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
      <property name="text">
       <string>Autonomous Navigation</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_gridmap_convert_3">
+    <widget class="QPushButton" name="pushButton_run_nav">
      <property name="geometry">
       <rect>
        <x>570</x>
@@ -356,7 +368,7 @@
       <string>RUN</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_vis_2dmap_4">
+    <widget class="QLabel" name="label_vis_nav">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -364,6 +376,9 @@
        <width>691</width>
        <height>531</height>
       </rect>
+     </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(255, 255, 255);</string>
@@ -385,6 +400,9 @@
       <font>
        <pointsize>18</pointsize>
       </font>
+     </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
      </property>
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
@@ -413,6 +431,9 @@
      <property name="contextMenuPolicy">
       <enum>Qt::DefaultContextMenu</enum>
      </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>
@@ -423,7 +444,7 @@
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_save_dir_bag">
+    <widget class="QLineEdit" name="lineEdit_gridmap_path">
      <property name="geometry">
       <rect>
        <x>230</x>
@@ -432,14 +453,20 @@
        <height>31</height>
       </rect>
      </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
+     <property name="dragEnabled">
+      <bool>false</bool>
+     </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_save_dir_bag_2">
+    <widget class="QLineEdit" name="lineEdit_waypoint_path">
      <property name="geometry">
       <rect>
        <x>230</x>
@@ -448,6 +475,9 @@
        <height>31</height>
       </rect>
      </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -455,7 +485,7 @@
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_gridmap_convert_4">
+    <widget class="QPushButton" name="pushButton_gridmap_open">
      <property name="geometry">
       <rect>
        <x>490</x>
@@ -473,7 +503,7 @@
       <string>Open</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_gridmap_convert_5">
+    <widget class="QPushButton" name="pushButton_waypoint_open">
      <property name="geometry">
       <rect>
        <x>490</x>

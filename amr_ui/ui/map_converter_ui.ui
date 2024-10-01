@@ -186,6 +186,9 @@ QSlider::handle:vertical {
       <pointsize>18</pointsize>
      </font>
     </property>
+    <property name="acceptDrops">
+     <bool>false</bool>
+    </property>
     <property name="text">
      <string/>
     </property>

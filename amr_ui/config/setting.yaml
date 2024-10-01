@@ -13,9 +13,17 @@
 map_converter:
   ui:
     voxel_size: 0.2 #[m]
-    point_size: 0.1
+    point_size: 0.2 # recommand voxel_size
     z_plane_size: 100.0
   handler:
     octree_resolution: 0.05 # resolution
     z_margin_threshold: 0.2 #
     ros_publish: true
+  
+#                                             ┌────────────────────────┐
+# ┌───────────────────────────────────────────┤       Navigation       ├──────────────────────────────────────────┐
+# │                                   English └────────────┬───────────┘ Korean                                   │
+# │                                                        │                                                      │
+# └────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────┘
+Navigation:
+  param1: "edit here..."
