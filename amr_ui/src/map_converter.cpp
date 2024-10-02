@@ -160,7 +160,9 @@ void MapConverter::saveGridMap(std::string SaveDir)
             int nTmpIdx = y * _mptrGridMap->info.width + x;
             int nTmpValue = _mptrGridMap->data[nTmpIdx];
             if (nTmpValue == -1) {
-                ofsPGM << "205 ";  // unknown(gray, 205)
+                // TODO: (Sanghyun)
+                ofsPGM << "255 ";  // Temporary....
+                // ofsPGM << "205 ";  // unknown(gray, 205)
             } else if (nTmpValue == 100) {
                 ofsPGM << "0 ";    // occupied(black, 0)
             } else {

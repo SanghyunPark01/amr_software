@@ -4,6 +4,8 @@ import sys
 import numpy as np
 import cv2
 import time
+import yaml
+import subprocess
 
 # ros
 import rospy
@@ -29,6 +31,7 @@ from waypoint_decision import WaypointDecision
 dir_ui_path__ = path__ + "/../ui/"
 ui_path = dir_ui_path__ + "amr_ui.ui"
 logo_path = dir_ui_path__ + "POSTECH.png"
+shell_path = path__ + "/../shell_script"
 q_UI_form = uic.loadUiType(ui_path)[0]
 # ==========================================================================
 
@@ -38,6 +41,7 @@ class UI(QMainWindow,q_UI_form):
         super().__init__()
         self.setupUi(self)
         self._m_home_path = os.path.expanduser('~')
+        #
         self.ImageView_2d_gridmap = pg.ImageView(view=pg.PlotItem())
         self.ImageView_2d_gridmap.ui.histogram.hide()
         self.ImageView_2d_gridmap.ui.roiBtn.hide()
@@ -45,6 +49,15 @@ class UI(QMainWindow,q_UI_form):
         self.ImageView_2d_gridmap.getView().hideAxis('left')
         self.ImageView_2d_gridmap.getView().hideAxis('bottom')
         self.verticalLayout_vis_gridmap.addWidget(self.ImageView_2d_gridmap)
+        #
+        self.ImageView_waypoint = pg.ImageView(view=pg.PlotItem())
+        self.ImageView_waypoint.ui.histogram.hide()
+        self.ImageView_waypoint.ui.roiBtn.hide()
+        self.ImageView_waypoint.ui.menuBtn.hide()
+        self.ImageView_waypoint.getView().hideAxis('left')
+        self.ImageView_waypoint.getView().hideAxis('bottom')
+        self.verticalLayout_vis_waypoint.addWidget(self.ImageView_waypoint)
+
 
         # map data dir
         self.map_data_dir = path__ + "/../map_data"
@@ -58,9 +71,16 @@ class UI(QMainWindow,q_UI_form):
         self.label_logo_postech.setPixmap(logo_pix_map)
 
         # init ros
+            # param
+        self.GRID_RESOLUTION = rospy.get_param("/map_converter/handler/octree_resolution")
+            # node
         rospy.init_node('amr_ui', anonymous = True)
         self._m_sub_conversion_status = rospy.Subscriber("/ui/map_converter_status/5089e6a42f124640607c98bd9cb4c890", Float32, self.callback_conversion_status, queue_size=1)
-        
+        self._m_pub_gridmap = rospy.Publisher("ui/gridmap", String, queue_size = 1)
+            # TODO: (youngtae) ros waypoint publisher
+        # self._m_pub_waypoint = rospy.Publisher("ui/waypoint", ) # HERE
+
+
         # init class
         self._m_map_converter = MapConverter()
         self._m_waypoint_decision = WaypointDecision()
@@ -70,17 +90,30 @@ class UI(QMainWindow,q_UI_form):
             # map converter
         self.pushButton_gridmap_setting.clicked.connect(self.set_map_converter)
         self.pushButton_gridmap_convert.clicked.connect(self.convert_3d_to_2d)
-        self.pushButton_waypoint_setting.clicked.connect(self.set_waypoint)
             # waypoint decision
-        
+        self.pushButton_waypoint_setting.clicked.connect(self.set_waypoint)
+        self.pushButton_waypoint_start.clicked.connect(self.start_waypoint_decision)
             # Nav
         self.pushButton_gridmap_open.clicked.connect(self.open_gridmap)
+        self.pushButton_waypoint_open.clicked.connect(self.open_waypont)
+        self.pushButton_pub_nav.clicked.connect(self.pub_map_waypoint)
+            # etc
+        self.pushButton_slam.clicked.connect(self.run_slam)
+        self.pushButton_localization.clicked.connect(self.run_localization)
+        self.pushButton_navigation.clicked.connect(self.run_navigation)
 
         # var
             # map converter
         self._m_curr_z_value = 0
         self._m_grid_map_path = None
         self._m_conversion_stop_enabled = False
+        self._m_girdmap_status = False
+            # waypoint
+        self._m_waypoint = []
+        self._m_waypoint_path = ""
+        self._m_waypoint_status = False
+            # navigation
+        self._m_gridmap_config = ""
 
     # drag and drop
     def dragEnterEvent(self, event):
@@ -94,6 +127,8 @@ class UI(QMainWindow,q_UI_form):
             return
         if len(files) == 1 and files[0][-4:] == ".pgm":
             self.set_gridmap_path(files[0])
+        elif len(files) == 1 and files[0][-4:] == ".txt":
+            self.load_waypoints(files[0])
         else: 
             return
 
@@ -142,6 +177,9 @@ class UI(QMainWindow,q_UI_form):
         self.lineEdit_gridmap_path.setText(self._m_grid_map_path)
         self.set_2d_grid_img(self._m_grid_map_path)
 
+        self._m_gridmap_config = self._m_grid_map_path.replace('.pgm', '.yaml')
+        self._m_girdmap_status = True
+
     # waypoint decision
     def set_waypoint(self):
         if self._m_grid_map_path is None:
@@ -149,6 +187,12 @@ class UI(QMainWindow,q_UI_form):
         if self._m_grid_map_path[-4:] == ".pgm":
             self._m_waypoint_decision.set_girdmap_path_to_waypoint_decision(self._m_grid_map_path)
             self._m_waypoint_decision.show()
+    def start_waypoint_decision(self):
+        if not self._m_waypoint_decision.is_ready():
+            return
+        # if, is ready
+        self._m_waypoint.clear()
+        self.gen_waypoint()
 
     # Nav
     def open_gridmap(self):
@@ -158,7 +202,31 @@ class UI(QMainWindow,q_UI_form):
         if file_name[0][-4:] != ".pgm":
             return
         self.set_gridmap_path(file_name[0])
-        
+    def open_waypont(self):
+        file_name = QFileDialog.getOpenFileName(self, 'Open .txt file', self._m_home_path, '.txt(*.txt)')
+        if not file_name[0]:
+            return
+        if file_name[0][-4:] != ".txt":
+            return
+        self.load_waypoints(file_name[0])
+    def pub_map_waypoint(self):
+        if not self._m_girdmap_status or not self._m_waypoint_status:
+            return
+        self._m_pub_gridmap.publish(self._m_gridmap_config)
+        # TODO: (youngtae) - waypoint publish
+        print(self._m_waypoint)
+
+    # etc
+    def run_slam(self):
+        slam_sh = shell_path + "/slam.sh"
+        subprocess.call('sh ' + slam_sh, shell = True)
+    def run_localization(self):
+        slam_sh = shell_path + "/localization.sh"
+        subprocess.call('sh ' + slam_sh, shell = True)
+    def run_navigation(self):
+        slam_sh = shell_path + "/navigation.sh"
+        subprocess.call('sh ' + slam_sh, shell = True)
+
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     # @@@@@@@ For Callback Function @@@@@@@
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -172,6 +240,84 @@ class UI(QMainWindow,q_UI_form):
         # set view - zoom
         width, height = gridmap_img.shape
         self.ImageView_2d_gridmap.getView().setRange(xRange=[0 + width/2, width/4 + width/2], yRange=[0 + height/2, height/4 + height/2], padding=0)
+
+    def set_girdmap_color_img(self, img_color):
+        self.ImageView_waypoint.setImage(np.transpose(img_color, (1, 0, 2)), levels = (0, 255))
+        width, height, _ = img_color.shape
+        self.ImageView_waypoint.getView().setRange(xRange=[0 + width/2, width/4 + width/2], yRange=[0 + height/2, height/4 + height/2], padding=0)
+    
+    def gen_waypoint(self):
+        info__ = self._m_waypoint_decision.get_info() 
+        wall_info = info__[0] # image coordinate
+        interval_info = info__[1] # real scale
+        right_side = self._m_waypoint_decision.get_orientation() # True: right side, False: left side
+        
+        # waypoint decision with image coordinate
+        interval_info = [(x / self.GRID_RESOLUTION) for x in interval_info] # real to img
+        interval_info.sort(reverse=True)
+
+        x1, y1 = wall_info[0]
+        x2, y2 = wall_info[1]
+        dx = x2 - x1
+        dy = y2 - y1
+        length = np.sqrt(dx**2 + dy**2)
+
+        perpendicular_dx = -dy / length
+        perpendicular_dy = dx / length
+
+        if not right_side:
+            perpendicular_dx *= -1
+            perpendicular_dy *= -1
+
+        for idx, interval in enumerate(interval_info):
+            new_start_point = (x1 + interval * perpendicular_dx, y1 + interval * perpendicular_dy)
+            new_end_point = (x2 + interval * perpendicular_dx, y2 + interval * perpendicular_dy)
+            points = [new_start_point, new_end_point] if idx % 2 == 0 else [new_end_point, new_start_point]
+            self._m_waypoint.extend(points)
+
+        gird_map_img = cv2.imread(self._m_grid_map_path, cv2.IMREAD_UNCHANGED) # (height, width)
+        color_grid_map = cv2.cvtColor(gird_map_img, cv2.COLOR_GRAY2RGB)
+
+        # for visualize
+        distance_wall = np.hypot(wall_info[0][0] - wall_info[1][0], wall_info[0][1] - wall_info[1][1])
+        tip_length_wall = 20 / distance_wall if distance_wall != 0 else 0
+        cv2.arrowedLine(color_grid_map, wall_info[0], wall_info[1], (255, 0, 0), 3, tipLength=tip_length_wall)
+
+        prev_pt = None
+        for pt in self._m_waypoint:
+            curr_pt = tuple(map(int, pt))
+            cv2.circle(color_grid_map, curr_pt, 5, (0, 255, 0), -1)
+            if prev_pt is not None:
+                distance = np.hypot(prev_pt[0] - curr_pt[0], prev_pt[1] - curr_pt[1])
+                tip_length = 20 / distance if distance != 0 else 0
+                cv2.arrowedLine(color_grid_map, prev_pt, curr_pt, (0, 0, 255), 3, tipLength=tip_length)
+
+            prev_pt = curr_pt
+
+        self.set_girdmap_color_img(color_grid_map)
+
+        # image coordinate to world coordinate(real scale)
+        self._m_gridmap_config = self._m_grid_map_path.replace('.pgm', '.yaml')
+        map_setting = ui_utility.read_yaml(self._m_gridmap_config)
+        origin_x = map_setting['origin'][0]
+        origin_y = map_setting['origin'][1]
+        self._m_waypoint = [(pt[0] * self.GRID_RESOLUTION + origin_x,(gird_map_img.shape[0] - pt[1]) * self.GRID_RESOLUTION + origin_y)for pt in self._m_waypoint]
+
+        # save waypoint
+        file_name = "waypoints.txt"
+        waypoint_path = self.map_data_dir + "/waypoint/" + file_name
+
+        ui_utility.save_waypoints(waypoint_path, self._m_waypoint)
+        self._m_waypoint_path = waypoint_path
+        self.lineEdit_waypoint_path.setText(self._m_waypoint_path)
+        self._m_waypoint_status = True
+    
+    def load_waypoints(self, path):
+        self._m_waypoint_path = path
+        self.lineEdit_waypoint_path.setText(self._m_waypoint_path)
+        self._m_waypoint = ui_utility.load_waypoints_from_txt(self._m_waypoint_path)
+        self._m_waypoint_status = True
+
 
 # ==========================================================================
 if __name__ == '__main__':

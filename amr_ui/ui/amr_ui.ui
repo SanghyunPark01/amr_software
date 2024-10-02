@@ -171,7 +171,7 @@
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_slam_0">
+   <widget class="QPushButton" name="pushButton_slam">
     <property name="geometry">
      <rect>
       <x>1310</x>
@@ -253,22 +253,6 @@
       <string>Setting</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_vis_waypoint">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>70</y>
-       <width>361</width>
-       <height>261</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
     <widget class="Line" name="line_2">
      <property name="geometry">
       <rect>
@@ -293,7 +277,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>20</pointsize>
+       <pointsize>24</pointsize>
       </font>
      </property>
      <property name="text">
@@ -312,6 +296,17 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+    </widget>
+    <widget class="QWidget" name="verticalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>70</y>
+       <width>361</width>
+       <height>261</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_vis_waypoint"/>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
@@ -350,7 +345,7 @@
       <string>Autonomous Navigation</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_run_nav">
+    <widget class="QPushButton" name="pushButton_pub_nav">
      <property name="geometry">
       <rect>
        <x>570</x>
@@ -365,7 +360,7 @@
       </font>
      </property>
      <property name="text">
-      <string>RUN</string>
+      <string>Publsih</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_vis_nav">
@@ -536,6 +531,48 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_localization">
+    <property name="geometry">
+     <rect>
+      <x>1310</x>
+      <y>240</y>
+      <width>91</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>Localization</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_navigation">
+    <property name="geometry">
+     <rect>
+      <x>1310</x>
+      <y>360</y>
+      <width>91</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>Navigation</string>
     </property>
    </widget>
   </widget>

@@ -90,6 +90,7 @@ class WaypointDecision(QMainWindow,q_UI_form):
             # class
         self._m_gridmap_wall = GridMapWall()
         self._m_view_saved = False
+        self._m_is_ready = False
             # grid map
         self._m_gridmap_img = None
             # interval
@@ -102,6 +103,26 @@ class WaypointDecision(QMainWindow,q_UI_form):
         
         # init
         self.clear_interval_value()
+    
+    # member function
+    def set_girdmap_path_to_waypoint_decision(self, path):
+        # initialize this
+        self._m_gridmap_wall.initialize(path)
+        self.init_girdmap_view()
+        self.init_wall()
+        self._m_view_saved = True
+        self._m_is_ready = True
+    def get_info(self):
+        wall_info = self._m_gridmap_wall.get_wall_info() # image coordinate
+        interval_info = self._m_interval_list # real scale
+        return [wall_info, interval_info]
+    def is_ready(self):
+        return self._m_is_ready
+    def get_orientation(self):
+        if self.radioButton_interval_left.isChecked():
+            return False # left side
+        if self.radioButton_interval_right.isChecked():
+            return True # right side
 
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     # @@@@@@@ UI Callback Function @@@@@@@
@@ -205,12 +226,6 @@ class WaypointDecision(QMainWindow,q_UI_form):
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     # @@@@@@@ For Callback Function @@@@@@@
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    def set_girdmap_path_to_waypoint_decision(self, path):
-        # initialize this
-        self._m_gridmap_wall.initialize(path)
-        self.init_girdmap_view()
-        self.init_wall()
-        self._m_view_saved = True
     
     def init_wall(self):
         self._m_min_wall_line_length, self._m_max_wall_line_length = self._m_gridmap_wall.get_minmax_wall_length()
@@ -253,12 +268,13 @@ class GridMapWall():
         self._m_original_gridmap_img = None
         self._m_original_gridmap_img_gray = None
         self._m_gridmap_img = None
-        self._m_wall_line_center = [0, 0] # x, y
-        self._m_wall_line_length = 1.0
+        self._m_wall_line_center = [0, 0] # x, y image coordinate
+        self._m_wall_line_length = 1.0 # real scale
         self._m_wall_line_angle = 0
         self._m_min_wall_line_length = 0.1
         self._m_max_wall_line_length = 10.0
         self._m_wall_angle_visualize_offset = 90.0
+        self._m_wall_end2end = [(0.0, 0.0), (1.0, 1.0)] # image coordinate
 
     def initialize(self, gird_map_path):
         gird_map_img = cv2.imread(gird_map_path, cv2.IMREAD_UNCHANGED) # (height, width)
@@ -273,13 +289,16 @@ class GridMapWall():
         self._m_wall_line_angle = 0
     
     def relocate_wall(self):
-        pixel_level_length_half = (self._m_wall_line_length/2)/self.GRID_RESOLUTION
+        pixel_level_length_half = (self._m_wall_line_length/2)/self.GRID_RESOLUTION # real scale to image coordinate
         rad_angle = math.radians(self._m_wall_line_angle + self._m_wall_angle_visualize_offset)
         tmp_gridmap_img = self._m_original_gridmap_img.copy()
 
         tmp_start_pt = (int(self._m_wall_line_center[0]), int(self._m_wall_line_center[1]))
         tmp_end_pt1 = (int(self._m_wall_line_center[0] + pixel_level_length_half*math.cos(rad_angle)), int(self._m_wall_line_center[1] + pixel_level_length_half*math.sin(rad_angle)))
         tmp_end_pt2 = (int(self._m_wall_line_center[0] - pixel_level_length_half*math.cos(rad_angle)), int(self._m_wall_line_center[1] - pixel_level_length_half*math.sin(rad_angle)))
+        
+        self._m_wall_end2end[0] = tmp_end_pt2
+        self._m_wall_end2end[1] = tmp_end_pt1
 
         cv2.arrowedLine(tmp_gridmap_img, tmp_start_pt, tmp_end_pt1, (255, 0, 0), 3, tipLength=0.2)
         cv2.line(tmp_gridmap_img, tmp_start_pt, tmp_end_pt2, (255, 0, 0), 3)
@@ -319,7 +338,7 @@ class GridMapWall():
             self._m_wall_line_angle = math.degrees(math.atan2(y2-y1, x2-x1)) - self._m_wall_angle_visualize_offset
 
             self.relocate_wall()
-            
+
     # set
         # length & angle
     def set_wall_length(self, length):
@@ -355,3 +374,7 @@ class GridMapWall():
         return self._m_wall_line_center
     def get_wall_length(self):
         return self._m_wall_line_length
+    def get_wall_info(self):
+        start_point =  self._m_wall_end2end[0]
+        end_point = self._m_wall_end2end[1]
+        return start_point, end_point
