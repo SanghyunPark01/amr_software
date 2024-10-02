@@ -1,7 +1,7 @@
-# AMR UI
-This is UI for AMR.
+# AMR Simulation
+This is for AMR.
 
-## 🛠️Prerequisites
+## 🛠️Prerequisites(UI)
 ### 1) PyQt
 Test environment is PyQt5.
 
@@ -22,12 +22,12 @@ $ sudo apt-get install ros-noetic-octomap ros-noetic-octomap-mapping ros-noetic-
 ```bash
 $ cd (YOUR_WORKSPACE)/src
 $ git clone https://github.com/SanghyunPark01/amr_software.git
-$ git checkout amr_ui
+$ git checkout simulation
 $ cd ..
 $ catkin_make
 ```  
 
-## 🛠️Run
+## 🛠️Run(UI)
 ```bash
 $ roslaunch amr_ui test.launch
 ```
