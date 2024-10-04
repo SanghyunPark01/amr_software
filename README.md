@@ -19,11 +19,21 @@ It will work well in the Opencv 4.X
 
 ### 3) ROS
 Test environment is ROS Noetic.  
-It will work well in the ROS1(not ROS2).
+It will work well in the ROS1(not ROS2).  
 
-### 4) Octomap
+### 4) Open3D
+```bash
+$ pip3 install open3d
+```
+
+### 5) Octomap
 ```bash
 $ sudo apt-get install ros-noetic-octomap ros-noetic-octomap-mapping ros-noetic-octomap-msgs ros-noetic-octomap-ros ros-noetic-octomap-rviz-plugins ros-noetic-octomap-server
+```  
+
+### 6) etc
+```
+$ pip3 install pyqtgraph
 ```
 
 ## 🛠️Prerequisites(GAZEBO)
