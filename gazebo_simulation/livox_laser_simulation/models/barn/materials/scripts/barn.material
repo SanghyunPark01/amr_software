@@ -1,0 +1,13 @@
+material barn_texture
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture barn.png
+      }
+    }
+  }
+}
