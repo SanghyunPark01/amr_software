@@ -65,7 +65,7 @@ $ roslaunch amr_ui test.launch
 ```bash
 $ roslaunch livox_laser_simulation barn_world.launch
 ```
-- (optional) roboy keyboard control
+- (optional) robot keyboard control
 ```bash
 $ rosrun teleop_twist_keyboard teleop_twist_keyboard /cmd_vel:=/ddmr_velocity_controller/cmd_vel
 ```
