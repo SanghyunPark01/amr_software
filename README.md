@@ -1,6 +1,14 @@
 # AMR Simulation
 This is for AMR.
 
+## Description
+### UI
+### GAZEBO
+- Input Topic: `/ddmr_velocity_controller/cmd_vel`
+- Output Topic: 
+    - LiDAR: `/scan`
+    - Camera: same realsense ros
+
 ## 🛠️Prerequisites(UI)
 ### 1) PyQt
 Test environment is PyQt5.
