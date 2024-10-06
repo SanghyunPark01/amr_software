@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf
+  livox_ros_driver
 )
 
 find_package(gazebo REQUIRED)
