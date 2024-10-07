@@ -54,8 +54,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 91.9260482788086
-        Min Value: -43.195247650146484
+        Max Value: 26.50390625
+        Min Value: -55.48239517211914
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -74,7 +74,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.05000000074505806
       Style: Flat Squares
-      Topic: /scan
+      Topic: /livox/lidar
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true

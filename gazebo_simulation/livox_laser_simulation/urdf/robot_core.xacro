@@ -62,9 +62,11 @@
     <xacro:property name="M_PI" value="3.14159"/>
     <xacro:property name="laser_min_range" value="0.1"/>
     <xacro:property name="laser_max_range" value="200.0"/>
-    <xacro:property name="ros_topic" value="scan"/>
+    <xacro:property name="ros_topic" value="/livox/lidar"/>
     <xacro:property name="samples" value="24000"/>
+    <xacro:property name="publish_pointcloud_type" value="3"/>
     <xacro:property name="downsample" value="1"/>
+    
 
     <xacro:macro name="null_inertial">
         <inertial>
@@ -75,7 +77,7 @@
         </inertial>
     </xacro:macro>
 
-    <xacro:macro name="Livox_Mid_gazebo_sensor" params="visualize:=True update_rate:=10 resolution:=0.002  noise_mean:=0.0 noise_stddev:=0.01 name:=livox">
+    <xacro:macro name="Livox_Mid_gazebo_sensor" params="visualize:=True update_rate:=10 resolution:=0.002 noise_mean:=0.0 noise_stddev:=0.01 name:=livox">
         <gazebo reference="${name}">
         <sensor type="ray" name="laser_${name}">
             <pose>0 0 0 0 0 0</pose>
@@ -114,6 +116,7 @@
             <downsample>${downsample}</downsample>
             <csv_file_name>package://livox_laser_simulation/scan_mode/mid360.csv</csv_file_name>
             <ros_topic>${ros_topic}</ros_topic>
+            <publish_pointcloud_type>${publish_pointcloud_type}</publish_pointcloud_type>
             </plugin>
         </sensor>
         </gazebo>

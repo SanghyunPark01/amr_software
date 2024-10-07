@@ -15,6 +15,6 @@
 
   <include file="$(find livox_laser_simulation)/launch/spawn_ddmr.launch">
   </include>
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find livox_laser_simulation)/rviz/livox_simulation.rviz"/>
+  <!--node name="rviz" pkg="rviz" type="rviz" args="-d $(find livox_laser_simulation)/rviz/livox_simulation.rviz"/-->
 
 </launch>
