@@ -6,7 +6,8 @@ This is for AMR.
 ### GAZEBO
 - Input Topic: `/ddmr_velocity_controller/cmd_vel`
 - Output Topic: 
-    - LiDAR: `/scan`
+    - LiDAR: `/livox/lidar
+    - IMU: /imu
     - Camera: same realsense ros
 
 ## 🛠️Prerequisites(UI)
@@ -67,5 +68,5 @@ $ roslaunch livox_laser_simulation barn_world.launch
 ```
 - (optional) robot keyboard control
 ```bash
-$ rosrun teleop_twist_keyboard teleop_twist_keyboard /cmd_vel:=/ddmr_velocity_controller/cmd_vel
+$ rosrun teleop_twist_keyboard teleop_twist_keyboard.py /cmd_vel:=/ddmr_velocity_controller/cmd_vel
 ```

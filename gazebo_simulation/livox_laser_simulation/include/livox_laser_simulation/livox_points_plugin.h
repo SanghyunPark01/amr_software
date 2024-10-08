@@ -112,7 +112,7 @@ class LivoxPointsPlugin : public RayPlugin {
     int64_t downSample = 1;
     int publishPointCloudType = 3;
 
-    double maxDist = 400.0;
+    double maxDist = 30.0;
     double minDist = 0.1;
 };
 

@@ -600,6 +600,10 @@ namespace gazebo
         {
             std::pair<int, AviaRotateInfo> &pair = points_pair[i];
             auto range = rayShape->GetRange(pair.first);
+
+            if(range < minDist || range > maxDist)
+                continue;
+
             auto intensity = rayShape->GetRetro(pair.first);
             if (range >= RangeMax()) {
                     range = 0;

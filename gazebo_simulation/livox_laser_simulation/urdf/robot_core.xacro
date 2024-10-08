@@ -48,7 +48,7 @@
                 <box size="0.7 0.7 0.35"/>  <!-- Adjusted to 70cm diameter -->
             </geometry>
         </collision>
-        <xacro:inertial_box mass="1.5" x="0.7" y="0.7" z="0.35">
+        <xacro:inertial_box mass="3.0" x="0.7" y="0.7" z="0.35">
             <origin xyz="0.35 0 0.175" rpy="0 0 0"/>
         </xacro:inertial_box>
     </link>
@@ -61,7 +61,7 @@
 
     <xacro:property name="M_PI" value="3.14159"/>
     <xacro:property name="laser_min_range" value="0.1"/>
-    <xacro:property name="laser_max_range" value="200.0"/>
+    <xacro:property name="laser_max_range" value="20.0"/>
     <xacro:property name="ros_topic" value="/livox/lidar"/>
     <xacro:property name="samples" value="24000"/>
     <xacro:property name="publish_pointcloud_type" value="3"/>
@@ -173,7 +173,7 @@
                 <box size="0.2 0.2 1.6"/>
             </geometry>
         </collision>
-        <xacro:inertial_box mass="0.1" x="0.2" y="0.2" z="1.6">
+        <xacro:inertial_box mass="0.05" x="0.2" y="0.2" z="1.6">
             <origin xyz="0.0 0 0.8" rpy="0 0 0"/>
         </xacro:inertial_box>
     </link>
@@ -185,7 +185,7 @@
     <joint name="fixed" type="fixed">
 		<parent link="sensor_link"/>
 		<child link="livox_base"/>
-		<!-- <origin xyz="0.2 0 1.6" rpy="${M_PI/6} 0 0" /> -->
+		<!--origin xyz="0.2 0 1.6" rpy="${M_PI/6} 0 0" /--> 
         <origin xyz="0.2 0 1.6" rpy="${M_PI/6} 0 ${M_PI/2}" />
 	</joint>
 
@@ -225,7 +225,7 @@
                 <cylinder radius="0.15" length="0.05"/>  <!-- Adjusted to 30cm diameter -->
             </geometry>
         </collision>
-        <xacro:inertial_cylinder mass="0.5" length="0.05" radius="0.15">
+        <xacro:inertial_cylinder mass="1.0" length="0.05" radius="0.15">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
@@ -270,7 +270,7 @@
                 <cylinder radius="0.15" length="0.05"/>  <!-- Adjusted to 30cm diameter -->
             </geometry>
         </collision>
-        <xacro:inertial_cylinder mass="0.5" length="0.05" radius="0.15">
+        <xacro:inertial_cylinder mass="1.0" length="0.05" radius="0.15">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
@@ -304,7 +304,7 @@
                 <sphere radius="0.15"/>
             </geometry>
         </collision>
-        <xacro:inertial_sphere mass="0.1" radius="0.15">
+        <xacro:inertial_sphere mass="0.5" radius="0.15">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_sphere>
     </link>
@@ -333,7 +333,7 @@
                 <sphere radius="0.15"/>
             </geometry>
         </collision>
-        <xacro:inertial_sphere mass="0.1" radius="0.15">
+        <xacro:inertial_sphere mass="0.5" radius="0.15">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_sphere>
     </link>

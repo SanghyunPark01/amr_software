@@ -1,0 +1,21 @@
+
+    <arg name="map" default="sim_test"/>
+
+    <!-- Run the map server --> 
+    <arg name="map_file" default="$(find amr_ui)/map_data/$(arg map).yaml"/>
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" respawn="true" />
+
+    <!--- Run Fast-LIO localization --> 
+
+
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <!-- <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/> -->
+        <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>        
+        <rosparam file="$(find nav)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+        <rosparam file="$(find nav)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find nav)/config/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find nav)/config/global_costmap_params.yaml" command="load" /> 
+        <rosparam file="$(find nav)/config/base_local_planner_params.yaml" command="load" />
+        <remap from="/cmd_vel" to="/armbot/mobile_base_controller/cmd_vel"/>
+        <remap from="/odom" to="/armbot/mobile_base_controller/odom"/>
+    </node>
