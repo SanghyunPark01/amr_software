@@ -20,7 +20,6 @@ mapping:
     extrinsic_R: [ 1, 0, 0,
                    0, 1, 0,
                    0, 0, 1]
-
 publish:     
     scan_publish_en:  1       # 'false' will close all the point cloud output
     dense_publish_en: 1       # false will low down the points number in a global-frame point clouds scan.

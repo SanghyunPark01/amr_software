@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 # TODO: (youngtae) change command line
-gnome-terminal --title "change here" -- bash -c "change command here"
+gnome-terminal --title "fast_lio" -- bash -c "source /home/moon/ws/ws_amr/devel/setup.bash && roslaunch nav navigation.launch"
