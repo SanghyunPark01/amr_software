@@ -1,9 +1,11 @@
 <launch>
+    <!--@@HERE@@, change map name-->
+    <arg name="map" default="1009_map"/>
+
+
     <env name="ROSCONSOLE_FORMAT" value="[${severity}][${thread}][${node}/${function}:${line}]: ${message}"/>
     <arg name="addpose_topic" default="/initialpose"/>
     <arg name="posearray_topic" default="/waypoints"/>
-    <arg name="map" default="1009_map"/>
-    <arg name="model" default="$(find nav)/urdf/robot_core.xacro"/>
 
 <!--waypoint follower
     <node pkg="nav" type="follow_waypoints" name="follow_waypoints" output="screen" clear_params="true">
@@ -17,7 +19,7 @@
 
 <!--ros navigation-->    
     <!-- Run the map server --> 
-    <arg name="map_file" default="$(find nav)/map_data/$(arg map).yaml"/>
+    <arg name="map_file" default="$(find amr_ui)/map_data/$(arg map).yaml"/>
     <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" respawn="true" />
 
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">

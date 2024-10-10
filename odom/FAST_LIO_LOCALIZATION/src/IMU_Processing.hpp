@@ -190,7 +190,7 @@ void ImuProcess::IMU_init(const MeasureGroup &meas, esekfom::esekf<state_ikfom, 
 
     N ++;
   }
-/* modified by SanghyunPark - Start */
+/* modified by SanghyunPark - Start -@@HERE@@*/
   Eigen::Quaterniond rotation = Eigen::Quaterniond::FromTwoVectors(mean_acc, Eigen::Vector3d::UnitZ());
   mean_acc = rotation * mean_acc;
   mean_gyr = rotation * mean_gyr;

@@ -42,8 +42,6 @@ $ pip3 install pyqtgraph
 sudo apt-get install libignition-math4-dev
 ```
 
-
-
 ## 🛠️Build
 ```bash
 $ cd (YOUR_WORKSPACE)/src
@@ -69,4 +67,42 @@ $ roslaunch livox_laser_simulation barn_world.launch
 - (optional) robot keyboard control
 ```bash
 $ rosrun teleop_twist_keyboard teleop_twist_keyboard.py /cmd_vel:=/ddmr_velocity_controller/cmd_vel
+```
+
+
+## Navigation part
+- sensor topic from gazebo
+    - /livox/lidar
+    - /imu
+
+- Input for Navigation
+    - global_map: tf from map to base_link
+    - local_map: tf from camera_init to base_link
+    - goal: move_base_simple/goal(geometry_msgs/PoseStamped)
+
+- notes
+    - movement in gazebo is wierd now, need to modify
+    - fast_lio mapping and localization are all modified for gravity alignment. Ask more detail to sanghyun
+    - navigation part is not finished yet. 
+    - after mapping you have to change path for map in navigation package
+        - check "@@HERE@@" tag
+
+## 🛠️Run(Mapping)
+
+```bash
+$ roslaunch fast_lio mapping_mid360.launch
+```
+
+## 🛠️Run(Localization)
+
+```bash
+$ roslaunch nav navigation.launch
+```
+
+
+## 🛠️Run(Navigation)
+
+```bash
+$ roslaunch nav navigation.launch
+$ rosrun nav publish_goal.py 0 0 0 0 0 0 1
 ```
