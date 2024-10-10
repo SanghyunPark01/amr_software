@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 import threading
 import rospy
 import actionlib
@@ -38,7 +38,7 @@ def changePose(waypoint,target_frame):
 
 
 #Path for saving and retreiving the pose.csv file 
-output_file_path = rospkg.RosPack().get_path('follow_waypoints')+"/saved_path/pose.csv"
+output_file_path = rospkg.RosPack().get_path('nav')+"/saved_path/pose.csv"
 waypoints = []
 
 class FollowPath(State):

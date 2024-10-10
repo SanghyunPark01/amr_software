@@ -1,9 +1,9 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # coding=utf8
 from __future__ import print_function, division, absolute_import
 
 import copy
-import thread
+import _thread
 import time
 
 import open3d as o3d
@@ -17,7 +17,7 @@ import tf
 import tf.transformations
 
 global_map = None
-initialized = False
+initialized = True
 T_map_to_odom = np.eye(4)
 cur_odom = None
 cur_scan = None
@@ -40,11 +40,11 @@ def msg_to_array(pc_msg):
 
 
 def registration_at_scale(pc_scan, pc_map, initial, scale):
-    result_icp = o3d.registration.registration_icp(
+    result_icp = o3d.pipelines.registration.registration_icp(
         voxel_down_sample(pc_scan, SCAN_VOXEL_SIZE * scale), voxel_down_sample(pc_map, MAP_VOXEL_SIZE * scale),
         1.0 * scale, initial,
-        o3d.registration.TransformationEstimationPointToPoint(),
-        o3d.registration.ICPConvergenceCriteria(max_iteration=20)
+        o3d.pipelines.registration.TransformationEstimationPointToPoint(),
+        o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=20)
     )
 
     return result_icp.transformation, result_icp.fitness
@@ -148,6 +148,7 @@ def global_localization(pose_estimation):
         map_to_odom.pose.pose = Pose(Point(*xyz), Quaternion(*quat))
         map_to_odom.header.stamp = cur_odom.header.stamp
         map_to_odom.header.frame_id = 'map'
+        map_to_odom.child_frame_id = 'odom'
         pub_map_to_odom.publish(map_to_odom)
         return True
     else:
@@ -208,21 +209,24 @@ def thread_localization():
 
 
 if __name__ == '__main__':
-    MAP_VOXEL_SIZE = 0.4
-    SCAN_VOXEL_SIZE = 0.1
+    #youngtae_modified
+    MAP_VOXEL_SIZE = 0.5
+    SCAN_VOXEL_SIZE = 0.2
 
     # Global localization frequency (HZ)
     FREQ_LOCALIZATION = 0.5
 
     # The threshold of global localization,
     # only those scan2map-matching with higher fitness than LOCALIZATION_TH will be taken
-    LOCALIZATION_TH = 0.95
+    LOCALIZATION_TH = 0.9
 
     # FOV(rad), modify this according to your LiDAR type
-    FOV = 1.6
+    #youngtae_modified
+    FOV = 2*np.pi
 
     # The farthest distance(meters) within FOV
-    FOV_FAR = 150
+    #youngtae_modified
+    FOV_FAR = 40
 
     rospy.init_node('fast_lio_localization')
     rospy.loginfo('Localization Node Inited...')
@@ -237,7 +241,7 @@ if __name__ == '__main__':
 
     # 初始化全局地图
     rospy.logwarn('Waiting for global map......')
-    initialize_global_map(rospy.wait_for_message('/map', PointCloud2))
+    initialize_global_map(rospy.wait_for_message('/map_lio', PointCloud2))
 
     # 初始化
     while not initialized:
@@ -255,6 +259,6 @@ if __name__ == '__main__':
     rospy.loginfo('Initialize successfully!!!!!!')
     rospy.loginfo('')
     # 开始定期全局定位
-    thread.start_new_thread(thread_localization, ())
+    _thread.start_new_thread(thread_localization, ())
 
     rospy.spin()

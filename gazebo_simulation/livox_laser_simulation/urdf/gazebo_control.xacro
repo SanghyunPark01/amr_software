@@ -23,8 +23,8 @@
             <robot_base_frame>base_link</robot_base_frame>
 
             <publishWheelTF>true</publishWheelTF>
-            <publishTf>true</publishTf>
-            <publishOdom>true</publishOdom>
+            <publishTf>false</publishTf>
+            <publishOdom>false</publishOdom>
         </plugin>
     </gazebo>
 
