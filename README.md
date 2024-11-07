@@ -81,11 +81,12 @@ $ rosrun teleop_twist_keyboard teleop_twist_keyboard.py /cmd_vel:=/ddmr_velocity
     - goal: move_base_simple/goal(geometry_msgs/PoseStamped)
 
 - notes
+    - what I've changed or what you need to change are with "@@HERE@@" tag
     - movement in gazebo is wierd now, need to modify
     - fast_lio mapping and localization are all modified for gravity alignment. Ask more detail to sanghyun
     - navigation part is not finished yet. 
     - after mapping you have to change path for map in navigation package
-        - check "@@HERE@@" tag
+        
 
 ## 🛠️Run(Mapping)
 

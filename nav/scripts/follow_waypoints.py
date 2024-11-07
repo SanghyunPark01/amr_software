@@ -14,6 +14,8 @@ import csv
 import time
 from geometry_msgs.msg import PoseStamped
 
+
+
 # change Pose to the correct frame 
 def changePose(waypoint,target_frame):
     if waypoint.header.frame_id == target_frame:
@@ -35,7 +37,6 @@ def changePose(waypoint,target_frame):
     except:
         rospy.loginfo("CAN'T TRANSFORM POSE TO {} FRAME".format(target_frame))
         exit()
-
 
 #Path for saving and retreiving the pose.csv file 
 output_file_path = rospkg.RosPack().get_path('nav')+"/saved_path/pose.csv"
@@ -61,6 +62,9 @@ class FollowPath(State):
     def execute(self, userdata):
         global waypoints
         # Execute waypoints each in sequence
+        rospy.loginfo('###############################')
+        rospy.loginfo('##### REACHED Follow Path #####')
+        rospy.loginfo('###############################')
         for waypoint in waypoints:
             # Break if preempted
             if waypoints == []:
@@ -152,27 +156,17 @@ class GetPath(State):
             """thread worker function"""
             data_from_start_journey = rospy.wait_for_message('start_journey', Empty)
             rospy.loginfo('Recieved path READY start_journey')
-            with open(output_file_path, 'r') as file:
-                reader = csv.reader(file, delimiter = ',')
-                for row in reader:
-                    print (row)
-                    current_pose = PoseWithCovarianceStamped() 
-                    current_pose.pose.pose.position.x     =    float(row[0])
-                    current_pose.pose.pose.position.y     =    float(row[1])
-                    current_pose.pose.pose.position.z     =    float(row[2])
-                    current_pose.pose.pose.orientation.x = float(row[3])
-                    current_pose.pose.pose.orientation.y = float(row[4])
-                    current_pose.pose.pose.orientation.z = float(row[5])
-                    current_pose.pose.pose.orientation.w = float(row[6])
-                    waypoints.append(current_pose)
-                    self.poseArray_publisher.publish(convert_PoseWithCovArray_to_PoseArray(waypoints))
+            for waypoint in waypoints:
+                #waypoints.append(current_pose)
+                self.poseArray_publisher.publish(convert_PoseWithCovArray_to_PoseArray(waypoints))
             self.start_journey_bool = True
+            rospy.loginfo('start_journey_bool set to True')
             
             
         start_journey_thread = threading.Thread(target=wait_for_start_journey)
         start_journey_thread.start()
 
-        topic = self.addpose_topic;
+        topic = self.addpose_topic
         rospy.loginfo("Waiting to recieve waypoints via Pose msg on topic %s" % topic)
         rospy.loginfo("To start following waypoints: 'rostopic pub /path_ready std_msgs/Empty -1'")
         rospy.loginfo("OR")
@@ -181,8 +175,9 @@ class GetPath(State):
 
         # Wait for published waypoints or saved path  loaded
         while (not self.path_ready and not self.start_journey_bool):
+            rospy.loginfo("Waiting for waypoints...")
             try:
-                pose = rospy.wait_for_message(topic, PoseWithCovarianceStamped, timeout=1)
+                pose = rospy.wait_for_message(topic, PoseWithCovarianceStamped, timeout=1.0)
             except rospy.ROSException as e:
                 if 'timeout exceeded' in e.message:
                     continue  # no new waypoint within timeout, looping...
@@ -192,6 +187,7 @@ class GetPath(State):
             waypoints.append(changePose(pose, "map"))
             # publish waypoint queue as pose array so that you can see them in rviz, etc.
             self.poseArray_publisher.publish(convert_PoseWithCovArray_to_PoseArray(waypoints))
+        rospy.loginfo('###############################')
 
         # Path is ready! return success and move on to the next state (FOLLOW_PATH)
         return 'success'
@@ -207,10 +203,11 @@ class PathComplete(State):
         return 'success'
 
 def main():
-    rospy.init_node('follow_waypoints')
+
+    rospy.init_node('follow_waypoints_original')
 
     sm = StateMachine(outcomes=['success'])
-
+    print("Starting follow_waypoints")
     with sm:
         StateMachine.add('GET_PATH', GetPath(),
                            transitions={'success':'FOLLOW_PATH'},
@@ -220,5 +217,10 @@ def main():
                            remapping={'waypoints':'waypoints'})
         StateMachine.add('PATH_COMPLETE', PathComplete(),
                            transitions={'success':'GET_PATH'})
-
+    print("Executing follow_waypoints")
     outcome = sm.execute()
+    print("Finished follow_waypoints")
+
+
+if __name__ == "__main__":
+    main()

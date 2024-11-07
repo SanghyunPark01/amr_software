@@ -241,6 +241,7 @@ if __name__ == '__main__':
 
     # 初始化全局地图
     rospy.logwarn('Waiting for global map......')
+    #maybe the topic name is duplicated, so I changed the topic name @@HERE@@
     initialize_global_map(rospy.wait_for_message('/map_lio', PointCloud2))
 
     # 初始化
