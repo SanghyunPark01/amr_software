@@ -79,6 +79,9 @@ $ rosrun teleop_twist_keyboard teleop_twist_keyboard.py /cmd_vel:=/ddmr_velocity
     - global_map: tf from map to base_link
     - local_map: tf from camera_init to base_link
     - goal: move_base_simple/goal(geometry_msgs/PoseStamped)
+    - add waypoint : /add_pose(geometry_msgs/PoseStamped) or 2D Pose Estimate in RVIZ 
+    - add waypoints : /waypoints(geometry_msgs/PoseArray)
+    - execute: /operation_mode (std_msgs/Int32), stop: 0, start: 1,  repeat: 2, pause: 3
 
 - notes
     - what I've changed or what you need to change are with "@@HERE@@" tag
@@ -86,6 +89,8 @@ $ rosrun teleop_twist_keyboard teleop_twist_keyboard.py /cmd_vel:=/ddmr_velocity
     - fast_lio mapping and localization are all modified for gravity alignment. Ask more detail to sanghyun
     - navigation part is not finished yet. 
     - after mapping you have to change path for map in navigation package
+    - if you pause navigator and restart it will follow the last goal(goal before pause)
+    - if you stop navigator it will initialize waypoints
         
 
 ## 🛠️Run(Mapping)
@@ -97,13 +102,12 @@ $ roslaunch fast_lio mapping_mid360.launch
 ## 🛠️Run(Localization)
 
 ```bash
-$ roslaunch nav navigation.launch
+$ roslaunch fast_lio_localization localization_mid360.launch
 ```
 
 
 ## 🛠️Run(Navigation)
 
 ```bash
-$ roslaunch nav navigation.launch
-$ rosrun nav publish_goal.py 0 0 0 0 0 0 1
+$ roslaunch nav navigation.launch 2> >(grep -v TF_REPEATED_DATA buffer_core) 
 ```

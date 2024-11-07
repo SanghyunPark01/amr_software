@@ -17,10 +17,10 @@ import time
 from enum import IntEnum
 
 class Mode(IntEnum):
+    STOP = 0
     START = 1
     REPEAT = 2
-    STOP = 3
-    PAUSE = 4
+    PAUSE = 3
 
 # change Pose to the correct frame 
 def transformPose(pose,target_frame):
@@ -46,6 +46,19 @@ def transformWaypoints(waypoints, target_frame):
     for i in range(len(waypoints)):
         waypoints[i] = transformPose(waypoints[i], target_frame)
     return waypoints
+
+def conver_PoseArray_to_PoseStampedArray(pose_array):
+    """Converts PoseArray to PoseStampedArray"""
+    rospy.loginfo('Converting PoseArray to PoseStampedArray')
+    #rospy.loginfo('PoseArray: %s' % pose_array)
+    array_of_pose_stamped =  []
+    for pose in pose_array.poses:
+        pose_stamped = PoseStamped()
+        pose_stamped.header = pose_array.header
+        pose_stamped.pose = pose
+        array_of_pose_stamped.append(pose_stamped)
+    #rospy.loginfo('PoseStampedArray: %s' % pose_stamped_array)
+    return array_of_pose_stamped
 
 def convert_PoseWithCovStamped_to_PoseStamped(pose):
     """Converts PoseWithCovarianceStamped to PoseStamped"""
@@ -183,7 +196,7 @@ class FollowPath(State):
         self.poseArray_publisher.publish(convert_PoseStampedArray_to_PoseArray(self.waypoints))
     
     def waypoint_callback(self, msg):
-        self.waypoints = msg.poses #array of geometry_msgs/PoseStamped, header, pose
+        self.waypoints = conver_PoseArray_to_PoseStampedArray(msg) #array of geometry_msgs/PoseStamped, header, pose
         self.waypoint_idx = 0
         rospy.loginfo('Waypoint queue updated')
         print(self.waypoints)
