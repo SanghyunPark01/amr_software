@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Load robot description -->
+  <include file="$(find livox_laser_simulation)/launch/description.launch" >
+  </include>
+
+  <!-- Load controller configuration -->
+  <rosparam command="load" file="$(find livox_laser_simulation)/config/control.yaml" />
+
+  <!-- Spawn controllers -->
+  <node name="base_controller_spawner" pkg="controller_manager" type="spawner"
+        args="ddmr_joint_publisher ddmr_velocity_controller"/>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+</launch>

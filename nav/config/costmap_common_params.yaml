@@ -1,0 +1,25 @@
+global_costmap:
+  global_frame: "map"
+  robot_base_frame: "base_link"
+  update_frequency: 5.0
+  publish_frequency: 2.0
+  static_map: true   # 사전 맵이 있는 경우, true로 설정
+
+local_costmap:
+  global_frame: "camera_init"
+  robot_base_frame: "base_link"
+  update_frequency: 5.0
+  publish_frequency: 2.0
+  rolling_window: true
+  width: 3.0
+  height: 3.0
+  resolution: 0.05
+
+  # 센서 데이터 비활성화
+  obstacle_range: 0
+  raytrace_range: 0
+  static_map: false
+  rolling_window: true
+
+  # 플러그인 비활성화
+  plugins: []

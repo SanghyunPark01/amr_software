@@ -1,0 +1,387 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <xacro:include filename="inertial_macros.xacro"/>
+
+    <material name="white">
+        <color rgba="1 1 1 1" />
+    </material>
+
+    <material name="orange">
+        <color rgba="1 0.3 0.1 1"/>
+    </material>
+
+    <material name="blue">
+        <color rgba="0.2 0.2 1 1"/>
+    </material>
+
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+
+    <!-- BASE LINK -->
+
+    <link name="base_link">
+
+    </link>
+
+
+    <!-- CHASSIS LINK -->
+
+    <joint name="chassis_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="chassis_link"/>
+        <origin xyz="-0.35 0 0"/>
+    </joint>
+
+    <link name="chassis_link">
+        <visual>
+            <origin xyz="0.35 0 0.175"/>
+            <geometry>
+                <box size="0.7 0.7 0.35"/>  <!-- Adjusted to 70cm diameter -->
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin xyz="0.35 0 0.175"/>
+            <geometry>
+                <box size="0.7 0.7 0.35"/>  <!-- Adjusted to 70cm diameter -->
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="3.0" x="0.7" y="0.7" z="0.35">
+            <origin xyz="0.35 0 0.175" rpy="0 0 0"/>
+        </xacro:inertial_box>
+    </link>
+
+    <gazebo reference="chassis_link">
+        <material>Gazebo/White</material>
+    </gazebo>
+
+    <!-- SENSOR LINK -->
+
+    <xacro:property name="M_PI" value="3.14159"/>
+    <xacro:property name="laser_min_range" value="0.1"/>
+    <xacro:property name="laser_max_range" value="20.0"/>
+    <xacro:property name="ros_topic" value="/livox/lidar"/>
+    <xacro:property name="samples" value="24000"/>
+    <xacro:property name="publish_pointcloud_type" value="3"/>
+    <xacro:property name="update_rate" value="10"/>
+    <xacro:property name="downsample" value="1"/>
+    
+
+    <xacro:macro name="null_inertial">
+        <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="0.01" ixy="0" ixz="0"
+            iyy="0.01" iyz="0"
+            izz="0.01"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="Livox_Mid_gazebo_sensor" params="visualize:=True update_rate:=10 resolution:=0.002 noise_mean:=0.0 noise_stddev:=0.01 name:=livox">
+        <gazebo reference="${name}">
+        <sensor type="ray" name="laser_${name}">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>${visualize}</visualize>
+            <update_rate>${update_rate}</update_rate>
+            <!-- This ray plgin is only for visualization. -->
+            <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
+                <ray>
+                <scan>
+                    <horizontal>
+                    <samples>100</samples>
+                    <resolution>1</resolution>
+                    <min_angle>${0}</min_angle>
+                    <max_angle>${2*M_PI}</max_angle>
+                    </horizontal>
+                    <vertical>
+                    <samples>360</samples>
+                    <resolution>1</resolution>
+                    <min_angle>${-7.22/180*M_PI}</min_angle>
+                    <max_angle>${55.22/180*M_PI}</max_angle>
+                    </vertical>
+                </scan>
+                <range>
+                    <min>${laser_min_range}</min>
+                    <max>${laser_max_range}</max>
+                    <resolution>${resolution}</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>${noise_mean}</mean>
+                    <stddev>${noise_stddev}</stddev>
+                </noise>
+                </ray>
+            <visualize>${visualize}</visualize>
+            <samples>${samples}</samples>
+            <downsample>${downsample}</downsample>
+            <csv_file_name>package://livox_laser_simulation/scan_mode/mid360.csv</csv_file_name>
+            <ros_topic>${ros_topic}</ros_topic>
+            <publish_pointcloud_type>${publish_pointcloud_type}</publish_pointcloud_type>
+            </plugin>
+        </sensor>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:macro name="Livox_Mid40" params="visualize:=True name:=livox">
+        <link name="${name}_base">
+        <xacro:null_inertial/>
+        <visual>
+            <origin xyz="0.00 0 0.0" rpy="0 0 0"/>
+            <geometry>
+            <mesh filename="package://livox_laser_simulation/meshes/livox_mid40.dae">
+            </mesh>
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" /> <geometry> <mesh
+            filename="package://livox_laser_simulation/meshes/livox_mid40.dae">
+            </mesh> </geometry>
+        </collision>
+        </link>
+        <link name="${name}">
+            <xacro:null_inertial/>
+        </link>
+
+        <joint name="${name}_to_${name}_base_joint" type="fixed">
+        <parent link="${name}_base"/>
+        <child link="${name}"/>
+        <origin rpy="0 0 0" xyz="0.0 0.0 0.2"/>
+        </joint>
+        <xacro:Livox_Mid_gazebo_sensor name="${name}" visualize="${visualize}"/>
+    </xacro:macro>
+
+    <xacro:Livox_Mid40 name="livox"/>
+
+    <joint name="sensor_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="sensor_link"/>
+        <origin xyz="0.15 0 0.35"/>
+    </joint>
+
+    <link name="sensor_link">
+        <visual>
+            <origin xyz="0.0 0 0.8"/>
+            <geometry>
+                <box size="0.2 0.2 1.6"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0 0.8"/>
+            <geometry>
+                <box size="0.2 0.2 1.6"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="0.05" x="0.2" y="0.2" z="1.6">
+            <origin xyz="0.0 0 0.8" rpy="0 0 0"/>
+        </xacro:inertial_box>
+    </link>
+
+    <gazebo reference="sensor_link">
+        <material>Gazebo/White</material>
+    </gazebo>
+
+    <joint name="fixed" type="fixed">
+		<parent link="sensor_link"/>
+		<child link="livox_base"/>
+		<!--origin xyz="0.2 0 1.6" rpy="${M_PI/6} 0 0" /--> 
+        <origin xyz="0.2 0 1.6" rpy="0 ${M_PI/6} 0" />
+	</joint>
+
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+    <xacro:sensor_d435 name="camera" topics_ns="camera" parent="livox_base" publish_pointcloud="true">
+        <origin xyz="0 -0.2 -0.3" rpy="0 -${M_PI/6} 0" />
+    </xacro:sensor_d435>
+
+    <!-- LEFT WHEEL LINK -->
+
+    <joint name="left_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_wheel_link"/>
+        <origin xyz="0 0.35 0" rpy="-${pi/2} 0 0" />  <!-- Adjusted position for larger chassis -->
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <transmission name="left_wheel_trans" type="SimpleTransmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="left_wheel_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="left_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <link name="left_wheel_link">
+        <visual>
+            <geometry>
+                <cylinder radius="0.15" length="0.05"/>  <!-- Adjusted to 30cm diameter -->
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.15" length="0.05"/>  <!-- Adjusted to 30cm diameter -->
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="1.0" length="0.05" radius="0.15">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <gazebo reference="left_wheel_link">
+        <material>Gazebo/Blue</material>
+        <mu1 value="1.0"/>
+        <mu2 value="1.0"/>
+        <kp value="10000000.0" />
+        <kd value="1.0" />
+        <fdir1 value="1 0 0"/>
+    </gazebo>
+
+    <!-- RIGHT WHEEL LINK -->
+
+    <joint name="right_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="right_wheel_link"/>
+        <origin xyz="0 -0.35 0" rpy="${pi/2} 0 0" />  <!-- Adjusted position for larger chassis -->
+        <axis xyz="0 0 -1"/>
+    </joint>
+
+    <transmission name="right_wheel_trans" type="SimpleTransmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="right_wheel_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="right_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <link name="right_wheel_link">
+        <visual>
+            <geometry>
+                <cylinder radius="0.15" length="0.05"/>  <!-- Adjusted to 30cm diameter -->
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.15" length="0.05"/>  <!-- Adjusted to 30cm diameter -->
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="1.0" length="0.05" radius="0.15">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <gazebo reference="right_wheel_link">
+        <material>Gazebo/Blue</material>
+        <mu1 value="1.0"/>
+        <mu2 value="1.0"/>
+        <kp value="10000000.0" />
+        <kd value="1.0" />
+        <fdir1 value="1 0 0"/>
+    </gazebo>
+
+    <!-- CASTER WHEEL LINK -->
+
+    <joint name="front_caster_wheel_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="front_caster_wheel_link"/>
+        <origin xyz="0.55 0 0"/>
+    </joint>
+
+    <link name="front_caster_wheel_link">
+        <visual>
+            <geometry>
+                <sphere radius="0.15"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.15"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_sphere mass="0.5" radius="0.15">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_sphere>
+    </link>
+
+    <gazebo reference="front_caster_wheel_link">
+        <material>Gazebo/Black</material>
+        <mu1 value="0.001"/>
+        <mu2 value="0.001"/>
+    </gazebo>
+
+    <joint name="rear_caster_wheel_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="rear_caster_wheel_link"/>
+        <origin xyz="0.15 0 0"/>
+    </joint>
+
+    <link name="rear_caster_wheel_link">
+        <visual>
+            <geometry>
+                <sphere radius="0.15"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.15"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_sphere mass="0.5" radius="0.15">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_sphere>
+    </link>
+
+    <gazebo reference="rear_caster_wheel_link">
+        <material>Gazebo/Black</material>
+        <mu1 value="0.001"/>
+        <mu2 value="0.001"/>
+    </gazebo>
+    <gazebo reference="livox_base">
+
+<gravity>true</gravity>
+
+<sensor name="imu_sensor" type="imu">
+
+<always_on>true</always_on>
+
+<update_rate>100</update_rate>
+
+<visualize>true</visualize>
+
+<topic>__default_topic__</topic>
+
+<plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+
+<topicName>imu</topicName>
+
+<bodyName>imu_link</bodyName>
+
+<updateRateHZ>100.0</updateRateHZ>
+
+<gaussianNoise>0.0</gaussianNoise>
+
+<xyzOffset>0 0 0</xyzOffset>
+
+<rpyOffset>0 0 0</rpyOffset>
+
+<frameName>imu_link</frameName>
+
+<initialOrientationAsReference>false</initialOrientationAsReference>
+
+</plugin>
+
+<pose>0 0 0 0 0 0</pose>
+
+</sensor>
+
+</gazebo> 
+
+</robot>

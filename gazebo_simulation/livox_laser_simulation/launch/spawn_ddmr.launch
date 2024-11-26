@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="robot_namespace" default="/"/>
+
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.2"/>
+  <arg name="yaw" default="0.0"/>
+
+  <group ns="$(arg robot_namespace)">
+
+    <include file="$(find livox_laser_simulation)/launch/control.launch">
+    </include>
+
+    <!-- <group if="$(optenv HUSKY_REALSENSE_ENABLED 0)">
+      <include file="$(find livox_laser_simulation)/launch/realsense.launch" />
+    </group> -->
+
+    <node name="spawn_husky_model" pkg="gazebo_ros" type="spawn_model"
+        args="-x $(arg x)
+              -y $(arg y)
+              -z $(arg z)
+              -Y $(arg yaw)
+              -unpause
+              -urdf
+              -param robot_description
+              -model psh_robot
+              -robot_namespace $(arg robot_namespace)" />
+
+  </group>
+
+</launch>

@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="barn_model">
+    <link name="link">
+      <inertial>
+        <pose>0 0 0 1.57079632679 0 0</pose>
+        <mass>1.0</mass>
+        <inertia>
+          <ixx>24.88</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>25.73</iyy>
+          <iyz>0</iyz>
+          <izz>2.48</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="bottom">
+        <pose>-0.1 -0.1 -0.1 1.57079632679 0 0</pose>
+        <geometry>
+          <box>
+            <size>20.0 20.0 0.01</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="barn">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://barn/meshes/barn.obj</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://barn/meshes/barn.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>
