@@ -175,7 +175,7 @@
     <property name="geometry">
      <rect>
       <x>1310</x>
-      <y>120</y>
+      <y>370</y>
       <width>91</width>
       <height>91</height>
      </rect>
@@ -345,24 +345,6 @@
       <string>Autonomous Navigation</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_pub_nav">
-     <property name="geometry">
-      <rect>
-       <x>570</x>
-       <y>70</y>
-       <width>131</width>
-       <height>71</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>20</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Publsih</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_vis_nav">
      <property name="geometry">
       <rect>
@@ -444,7 +426,7 @@
       <rect>
        <x>230</x>
        <y>70</y>
-       <width>251</width>
+       <width>291</width>
        <height>31</height>
       </rect>
      </property>
@@ -466,7 +448,7 @@
       <rect>
        <x>230</x>
        <y>110</y>
-       <width>251</width>
+       <width>291</width>
        <height>31</height>
       </rect>
      </property>
@@ -483,7 +465,7 @@
     <widget class="QPushButton" name="pushButton_gridmap_open">
      <property name="geometry">
       <rect>
-       <x>490</x>
+       <x>530</x>
        <y>70</y>
        <width>71</width>
        <height>31</height>
@@ -501,7 +483,7 @@
     <widget class="QPushButton" name="pushButton_waypoint_open">
      <property name="geometry">
       <rect>
-       <x>490</x>
+       <x>530</x>
        <y>110</y>
        <width>71</width>
        <height>31</height>
@@ -514,6 +496,45 @@
      </property>
      <property name="text">
       <string>Open</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_nav_mode">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>30</y>
+       <width>181</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>17</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QRadioButton::indicator { width: 30px; height: 30px;};</string>
+     </property>
+     <property name="text">
+      <string>Repeat Mode</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_set_nav">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>70</y>
+       <width>91</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Set</string>
      </property>
     </widget>
    </widget>
@@ -537,7 +558,7 @@
     <property name="geometry">
      <rect>
       <x>1310</x>
-      <y>240</y>
+      <y>490</y>
       <width>91</width>
       <height>91</height>
      </rect>
@@ -558,7 +579,7 @@
     <property name="geometry">
      <rect>
       <x>1310</x>
-      <y>360</y>
+      <y>610</y>
       <width>91</width>
       <height>91</height>
      </rect>
@@ -573,6 +594,79 @@
     </property>
     <property name="text">
      <string>Navigation</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_7">
+    <property name="geometry">
+     <rect>
+      <x>1300</x>
+      <y>350</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_start_nav">
+    <property name="geometry">
+     <rect>
+      <x>1310</x>
+      <y>170</y>
+      <width>91</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Start</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_stop_nav">
+    <property name="geometry">
+     <rect>
+      <x>1310</x>
+      <y>260</y>
+      <width>91</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Stop</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>1310</x>
+      <y>120</y>
+      <width>91</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>25</pointsize>
+     </font>
+    </property>
+    <property name="acceptDrops">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Nav</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>

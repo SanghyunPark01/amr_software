@@ -146,12 +146,16 @@ class WaypointDecision(QMainWindow,q_UI_form):
     def add_interval_value(self):
         if self.doubleSpinBox_interval_value.value() in self._m_interval_list:
             return
+        #
+        if len(self._m_interval_list) >= 2:
+            return
+
         self._m_interval_list.append(self.doubleSpinBox_interval_value.value())
         self.textBrowser_interval_list.insertPlainText("\n"+str(self.doubleSpinBox_interval_value.value()))
     def clear_interval_value(self):
         self.textBrowser_interval_list.clear()
         self._m_interval_list.clear()
-        self.textBrowser_interval_list.insertPlainText("[Intreval list]")
+        self.textBrowser_interval_list.insertPlainText("[Intreval list]\nOnly 2")
 
     # wall length
     def change_wall_length_of_spinbox(self, value):

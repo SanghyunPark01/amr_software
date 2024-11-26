@@ -10,6 +10,7 @@ import subprocess
 # ros
 import rospy
 from std_msgs.msg import *
+from geometry_msgs.msg import PoseArray
 from amr_ui.srv import *
 
 # QT
@@ -77,9 +78,11 @@ class UI(QMainWindow,q_UI_form):
         rospy.init_node('amr_ui', anonymous = True)
         self._m_sub_conversion_status = rospy.Subscriber("/ui/map_converter_status/5089e6a42f124640607c98bd9cb4c890", Float32, self.callback_conversion_status, queue_size=1)
         self._m_pub_gridmap = rospy.Publisher("ui/gridmap", String, queue_size = 1)
-            # TODO: (youngtae) ros waypoint publisher
-        # self._m_pub_waypoint = rospy.Publisher("ui/waypoint", ) # HERE
-
+            # for nav
+                # TODO: ros waypoint publisher
+        self._m_pub_waypoint = rospy.Publisher("/waypoints", PoseArray, queue_size= 10)
+                # mode
+        self._m_pub_nav_execute = rospy.Publisher("/operation_mode", Int32, queue_size = 10)
 
         # init class
         self._m_map_converter = MapConverter()
@@ -96,7 +99,11 @@ class UI(QMainWindow,q_UI_form):
             # Nav
         self.pushButton_gridmap_open.clicked.connect(self.open_gridmap)
         self.pushButton_waypoint_open.clicked.connect(self.open_waypont)
-        self.pushButton_pub_nav.clicked.connect(self.pub_map_waypoint)
+        self.pushButton_set_nav.clicked.connect(self.pub_map_waypoint)
+        self.pushButton_start_nav.clicked.connect(self.pub_start_nav)
+        self._m_pause_nav = True
+        self.pushButton_stop_nav.clicked.connect(self.pub_stop_nav)
+        
             # etc
         self.pushButton_slam.clicked.connect(self.run_slam)
         self.pushButton_localization.clicked.connect(self.run_localization)
@@ -110,6 +117,7 @@ class UI(QMainWindow,q_UI_form):
         self._m_girdmap_status = False
             # waypoint
         self._m_waypoint = []
+        self._m_waypoint_ros = PoseArray()
         self._m_waypoint_path = ""
         self._m_waypoint_status = False
             # navigation
@@ -212,9 +220,33 @@ class UI(QMainWindow,q_UI_form):
     def pub_map_waypoint(self):
         if not self._m_girdmap_status or not self._m_waypoint_status:
             return
-        self._m_pub_gridmap.publish(self._m_gridmap_config)
-        # TODO: (youngtae) - waypoint publish
-        print(self._m_waypoint)
+        self._m_pub_gridmap.publish(self._m_gridmap_config) # need to implement subscribe code in Nav Stack
+
+        # TODO: waypoint publish
+        # print(self._m_waypoint)
+        self._m_waypoint_ros = ui_utility.convert_waypoint_ros(self._m_waypoint)
+        # print(self._m_waypoint_ros)
+        self._m_pub_waypoint.publish(self._m_waypoint_ros)
+
+
+    def pub_start_nav(self):
+        if self._m_pause_nav:
+            # pub
+            if self.radioButton_nav_mode.isChecked(): # repeat mode
+                self._m_pub_nav_execute.publish(2)
+            else: # start
+                self._m_pub_nav_execute.publish(1)
+            self._m_pause_nav = False
+            self.pushButton_start_nav.setText("Pause")
+            return
+        else:
+            # pub pause
+            self._m_pub_nav_execute.publish(3)
+            self._m_pause_nav = True
+            self.pushButton_start_nav.setText("Start")
+            return
+    def pub_stop_nav(self):
+        self._m_pub_nav_execute.publish(0)
 
     # etc
     def run_slam(self):
@@ -254,7 +286,7 @@ class UI(QMainWindow,q_UI_form):
         
         # waypoint decision with image coordinate
         interval_info = [(x / self.GRID_RESOLUTION) for x in interval_info] # real to img
-        interval_info.sort(reverse=True)
+        interval_info.sort(reverse=False)
 
         x1, y1 = wall_info[0]
         x2, y2 = wall_info[1]
@@ -278,11 +310,12 @@ class UI(QMainWindow,q_UI_form):
         gird_map_img = cv2.imread(self._m_grid_map_path, cv2.IMREAD_UNCHANGED) # (height, width)
         color_grid_map = cv2.cvtColor(gird_map_img, cv2.COLOR_GRAY2RGB)
 
-        # for visualize
+        # for visualize - wall
         distance_wall = np.hypot(wall_info[0][0] - wall_info[1][0], wall_info[0][1] - wall_info[1][1])
         tip_length_wall = 20 / distance_wall if distance_wall != 0 else 0
         cv2.arrowedLine(color_grid_map, wall_info[0], wall_info[1], (255, 0, 0), 3, tipLength=tip_length_wall)
 
+        # for visualize - waypoint
         prev_pt = None
         for pt in self._m_waypoint:
             curr_pt = tuple(map(int, pt))
@@ -291,8 +324,12 @@ class UI(QMainWindow,q_UI_form):
                 distance = np.hypot(prev_pt[0] - curr_pt[0], prev_pt[1] - curr_pt[1])
                 tip_length = 20 / distance if distance != 0 else 0
                 cv2.arrowedLine(color_grid_map, prev_pt, curr_pt, (0, 0, 255), 3, tipLength=tip_length)
-
             prev_pt = curr_pt
+        curr_pt = tuple(map(int, self._m_waypoint[0]))
+        distance = np.hypot(prev_pt[0] - curr_pt[0], prev_pt[1] - curr_pt[1])
+        tip_length = 20 / distance if distance != 0 else 0
+        cv2.arrowedLine(color_grid_map, prev_pt, curr_pt, (0, 0, 255), 3, tipLength=tip_length)
+
 
         self.set_girdmap_color_img(color_grid_map)
 
