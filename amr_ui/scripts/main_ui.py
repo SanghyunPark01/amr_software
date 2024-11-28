@@ -79,7 +79,7 @@ class UI(QMainWindow,q_UI_form):
         self._m_sub_conversion_status = rospy.Subscriber("/ui/map_converter_status/5089e6a42f124640607c98bd9cb4c890", Float32, self.callback_conversion_status, queue_size=1)
         self._m_pub_gridmap = rospy.Publisher("ui/gridmap", String, queue_size = 1)
             # for nav
-                # TODO: ros waypoint publisher
+                # TODO: ros waypoint publisher -> Done
         self._m_pub_waypoint = rospy.Publisher("/waypoints", PoseArray, queue_size= 10)
                 # mode
         self._m_pub_nav_execute = rospy.Publisher("/operation_mode", Int32, queue_size = 10)
@@ -108,6 +108,7 @@ class UI(QMainWindow,q_UI_form):
         self.pushButton_slam.clicked.connect(self.run_slam)
         self.pushButton_localization.clicked.connect(self.run_localization)
         self.pushButton_navigation.clicked.connect(self.run_navigation)
+        self.pushButton_simulation.clicked.connect(self.run_simulation)
 
         # var
             # map converter
@@ -253,11 +254,14 @@ class UI(QMainWindow,q_UI_form):
         slam_sh = shell_path + "/slam.sh"
         subprocess.call('sh ' + slam_sh, shell = True)
     def run_localization(self):
-        slam_sh = shell_path + "/localization.sh"
-        subprocess.call('sh ' + slam_sh, shell = True)
+        localization_sh = shell_path + "/localization.sh"
+        subprocess.call('sh ' + localization_sh, shell = True)
     def run_navigation(self):
-        slam_sh = shell_path + "/navigation.sh"
-        subprocess.call('sh ' + slam_sh, shell = True)
+        navigation_sh = shell_path + "/navigation.sh"
+        subprocess.call('sh ' + navigation_sh, shell = True)
+    def run_simulation(self):
+        simulation_sh = shell_path + "/simulation.sh"
+        subprocess.call('sh ' + simulation_sh, shell = True)
 
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     # @@@@@@@ For Callback Function @@@@@@@
